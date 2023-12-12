@@ -285,10 +285,14 @@ class ImageGenArgs:
 
 class InteractiveStories:
 
-    def __init__(self, client: OpenAI = None, conf_file: str = 'config/bots.toml', save_file: str = 'save.json'):
+    def __init__(self, client: OpenAI = None, conf_file: str = 'config/bots.toml', save_file: str = 'save.json', asset_dir: str = 'assets'):
         self.client = client or OpenAI()
         self.conf_file = conf_file
         self.save_file = save_file
+        self.asset_dir = asset_dir
+        # Create the asset directory if it doesn't exist.
+        Path(self.asset_dir).mkdir(parents=True, exist_ok=True)
+        
         self.image_args = ImageGenArgs()
         self.storystate = StoryState()
         self.assistants = AssistantsAPI(self.client)
@@ -303,6 +307,7 @@ class InteractiveStories:
         self.storybotid = None
         self.activesess = None
         self.action_log = []
+
 
     def log_action(self, action: str):
         self.action_log.append(action)
@@ -335,18 +340,23 @@ class InteractiveStories:
     def load(self):
         self.log_action(f'Loading saved session from: {self.save_file}')
 
-        with open(self.save_file, 'r') as f:
-            save = json.load(f)
-        
-        self.storystate.load(save['storystate'])
-        self.storybotid = save['storybotid']
-        self.activesess = save['activesess']
+        try:
+            with open(self.save_file, 'r') as f:
+                save = json.load(f)
+            
+            self.storystate.load(save['storystate'])
+            self.storybotid = save['storybotid']
+            self.activesess = save['activesess']
 
-        if self.assistants.assistant(self.storybotid) is None:
+            if self.assistants.assistant(self.storybotid) is None:
+                self.storybotid = self.create_assistant()
+
+            if self.activesess is None and len(self.storystate.sessions) > 0:
+                self.activesess = self.storystate.sessions[-1].id
+        except FileNotFoundError:
+            self.log_action(f'No save file found. Creating a new assistant.')
             self.storybotid = self.create_assistant()
-
-        if self.activesess is None and len(self.storystate.sessions) > 0:
-            self.activesess = self.storystate.sessions[-1].id
+            self.activesess = self.assistants.add_thread().id
 
         self.activate_session(self.activesess)
     
@@ -510,7 +520,7 @@ class InteractiveStories:
     def get_narration(self, message_id: str, text: str, voice: str = 'alloy', format='opus', model='tts-1'):
         self.log_action(f'Generating narration for message: {message_id} with text: {text} and voice: {voice} in format: {format}')
         audio = generate_audio(self.client, text, voice=voice, format=format, model=model)
-        asset = Asset(message_id, 'narration', format, data=audio.content)
+        asset = Asset(message_id, 'narration', format, data=audio.content, base=self.asset_dir)
         asset.save()
         self.active_session.assets.add(asset)
         self.save()
@@ -567,7 +577,7 @@ class InteractiveStories:
         # Log with the revised prompt.
         self.log_action(f'Generated image for prompt: {desc} with revised prompt: {image.revised_prompt}')
         # 
-        asset = Asset(self.messages.last.id, 'visualization', 'png', data=b64decode(image.model_dump()["b64_json"]))
+        asset = Asset(self.messages.last.id, 'visualization', 'png', data=b64decode(image.model_dump()["b64_json"]), base=self.asset_dir)
         asset.save()
         self.active_session.assets.add(asset)
         return f'Success! Image presented to the user.'
