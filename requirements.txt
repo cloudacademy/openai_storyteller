@@ -1,0 +1,7 @@
+python-dotenv
+streamlit
+Jinja2
+pydantic
+tenacity
+pytest
+openai

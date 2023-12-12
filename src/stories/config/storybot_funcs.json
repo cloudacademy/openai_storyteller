@@ -1,0 +1,112 @@
+[
+    {
+        "type": "function",
+        "function": {
+            "name": "get_entity_bio",
+            "description": "Gets the bio for an entity from the story. Enables the AI assistant to get the most up-to-date data.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Entity name."
+                    }
+                },
+                "required": ["name"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_entity_names",
+            "description": "Gets a list of all the entity names in the story. Enables the AI assistant to know what entities are available.",
+            "parameters": {
+                "type": "object",
+                "properties": {}
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_generated_image",
+            "description": "Sends a request to an image generation service to generate an image based on a provided description. The image will be provided directly to the user and the story will continue. A string will be returned that indicates if the image was successfully generated or not.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "desc": {
+                        "type": "string",
+                        "description": "The description of the visualization."
+                    },
+                    "entities": {
+                        "type": "array",
+                        "description": "A list of entity bios to include in the visualization.",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": ["desc"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "set_story_config",
+            "description": "Set the theme and or guidelines for the story. Must be called before the story can begin.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "theme": {
+                        "type": "string",
+                        "description": "The theme of the story."
+                    },
+                    "guidelines": {
+                        "type": "string",
+                        "description": "The guidelines for the story. "
+                    }
+                },
+                "required": ["theme", "guidelines"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_story_config",
+            "description": "Get the theme and guidelines for the story.",
+            "parameters": {
+                "type": "object",
+                "properties": {}
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "set_entity_bio",
+            "description": "Sets the bio for an entity from the story. Called for each entity in the story as they are introduced, and can be called again to update the bio. Must contain a complete description of the entity.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Entity name."
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Entity type.",
+                        "enum": ["character", "location", "object", "event"]
+                    },
+                    "desc": {
+                        "type": "object",
+                        "description": "A complete description of the entity."
+                    }
+                },
+                "required": ["name", "type", "desc"]
+            }
+        }
+    }
+]

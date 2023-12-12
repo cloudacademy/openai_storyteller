@@ -1,0 +1,6 @@
+[storybot]
+name = "Storyteller"
+desc = "An interactive story bot."
+model = "gpt-3.5-turbo-1106"
+tools = "config/storybot_funcs.json"
+instruction_template = "storybot.md"
