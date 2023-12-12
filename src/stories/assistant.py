@@ -73,20 +73,12 @@ class AssistantsAPI:
         return self.client.beta.threads.retrieve(id)
     
     @retry_on_server_error
-    def threads(self, order: str = 'desc', limit: str = '20', **kwargs):
-        return list(self.client.beta.threads.list(order=order, limit=limit, **kwargs))
-    
-    @retry_on_server_error
     def add_thread(self, **kwargs):
         return self.client.beta.threads.create(**kwargs)
 
     @retry_on_server_error
     def delete_thread(self, thread_id: str):
         return self.client.beta.threads.delete(thread_id).deleted
-
-    @retry_on_server_error
-    def message(self, id: str):
-        return self.client.beta.threads.messages.retrieve(id)
 
     @retry_on_server_error
     def messages(self, thread_id: str, order: str = 'asc', **kwargs):

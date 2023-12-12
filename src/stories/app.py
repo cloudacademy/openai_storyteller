@@ -277,9 +277,6 @@ class ImageGenArgs:
     quality: str    = 'standard'
     size: str       = '1024x1024'
 
-    def set(self, arg: str, val: Any):
-        setattr(self, arg, val)
-
     def as_dict(self):
         return asdict(self)
 
