@@ -1,3 +1,17 @@
+# OpenAI Storyteller
+
+This application demonstrates how to use the OpenAI Assistants API. The application is an interactive story creation tool. The intended use is as a choose your own adventure story creation tool. However, it's flexible enough to be used in other ways.
+
+The application tracks the state of the story by capturing the theme, general story guidelines, and entities that appear in the story, such as: characters, items, and locations. The application ties into the OpenAI image and audio generation APIs to provide a more immersive experience. 
+
+The user interface consists of a sidebar and a main view. The sidebar contains functionality for creating, loading, and removing story sessions. It also contains functionality for configuring the assistant and audio/image generation. The main view contains a chat input used to send messages to the assistant. Messages are displayed on the story tab of the main view. 
+
+![The Story Tab](./screenshots/story.png)
+
+Entities extracted from the story are displayed on the entities tab. The assistant uses the description of the entities to provide more context for the story, and to generate images.
+
+![Entities Tab](./screenshots/entities.png)
+
 
 ### Requirements
 
@@ -52,3 +66,5 @@
     ```
 
 10. Open the URL listed in the console.
+
+
